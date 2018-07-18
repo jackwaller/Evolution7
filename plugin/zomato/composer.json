@@ -1,0 +1,40 @@
+{
+    "name": "jackwaller/zomato",
+    "description": "A craft plugin to make requests to the Zomato API",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "zomato"
+    ],
+    "support": {
+        "docs": "https://github.com/jackwaller/zomato/blob/master/README.md",
+        "issues": "https://github.com/jackwaller/zomato/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jack Waller",
+            "homepage": "https://github.com/jackwaller"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "jackwaller\\zomato\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Zomato",
+        "handle": "zomato",
+        "hasCpSettings": false,
+        "hasCpSection": false,
+        "changelogUrl": "https://raw.githubusercontent.com/jackwaller/zomato/master/CHANGELOG.md",
+        "class": "jackwaller\\zomato\\Zomato"
+    }
+}
