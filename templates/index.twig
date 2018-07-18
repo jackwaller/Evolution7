@@ -1,1 +1,10 @@
-homepage
+{% extends '_layout' %}
+{% block main %}
+    {# Make a call to the zomato API #}
+    {% set resturants = searchZomato() %}
+    {# {{resturants|json_encode()}} #}
+    {% for restaurant in resturants %}
+        <img src={{ restaurant.restaurant.featured_image  }} style="width: 100px; height: 100px;">
+        <p>{{ restaurant.restaurant.name  }}</p>
+    {% endfor %}
+{% endblock %}
