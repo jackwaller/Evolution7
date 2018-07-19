@@ -42,8 +42,6 @@ class ZomatoTwigExtension extends \Twig_Extension
     /**
      * Returns an array of Twig filters, used in Twig templates via:
      *
-     *      {{ 'something' | someFilter }}
-     *
      * @return array
      */
     public function getFilters()
@@ -55,37 +53,77 @@ class ZomatoTwigExtension extends \Twig_Extension
 
     /**
      * Returns an array of Twig functions, used in Twig templates via:
-     *
-     *      {% set this = someFunction('something') %}
-     *
-    * @return array
+     * 
+     * @return array
      */
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('searchZomato', [$this, 'requestZomatoApi']),
+            new \Twig_SimpleFunction('retrieveRestaurants', [$this, 'retrieveRestaurants']),
         ];
     }
 
     /**
-     * Contact the Zomato API and make a request to fetch restaurants 
+     *  Use server-side caching to store API request's as JSON at a set 
+     *  interval, rather than each pageload. Set the interval to 2 hours
+     *     
+     * @return array
+     */
+    public function retrieveRestaurants()
+    {
+        $cacheFile = dirname(__FILE__) . '/zomato-cache.json';
+        $expires = time() - 2*60*60;
+
+        // Check if the file exists and if it has not expired 
+        if(file_exists($cacheFile) && filectime($cacheFile) > $expires) {
+            $jsonResults = file_get_contents($cacheFile);
+        } else {
+            $jsonResults = $this->zomatoApiRequest();
+            // Check if there was an error with the zomato API 
+            if ($jsonResults == "An unexpected error has occurred") {
+                // If there is an existing file return regardless if it has expired or not
+                if (file_exists($cacheFile)) {
+                    $jsonResults = file_get_contents($cacheFile);
+                } else {
+                    return "An unexpected error has occurred";
+                }
+            }
+            file_put_contents($cacheFile, $jsonResults);
+        }
+        // Return JSON to the homepage
+        $result = json_decode($jsonResults,true);
+        return $result['restaurants'];
+    }
+
+    /**
+     * Contact the Zomato API and save the response to cache
      *     *
      * @return array
      */
-    public function requestZomatoApi($location = 259)
+    public function zomatoApiRequest($location = 259)
     {
-        // Use guzzle to make a request to the Zomato API
-        $client = new Client();
-        $response = $client->get(
-            'https://developers.zomato.com/api/v2.1/search?entity_id='.$location.'&entity_type=city&count=20', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'user-key' => 'a92d3dc1e771de07f4ca19fa8c8cbd8f',
-            ],
-        ]);
-
-        // Return the contents of the response 
-        $result = json_decode($response->getBody()->getContents(),true);
-        return $result['restaurants'];
+          // Use guzzle to make a request to the Zomato API
+          $client = new Client();
+          try
+          {
+              $response = $client->get(
+                  'https://developers.zomato.com/api/v2.1/search?entity_id='.$location.'&entity_type=city&count=20', [
+                  'headers' => [
+                      'Accept' => 'application/json',
+                      'user-key' => 'a92d3dc1e771de07f4ca19fa8c8cbd8f',
+                  ],
+              ]);
+              $content = $response->getBody()->getContents(); 
+              return $content;     
+          }
+          catch (RequestException $e)
+          {   
+              return "An unexpected error has occurred"; 
+          }
     }
+
+
 }
+
+
+

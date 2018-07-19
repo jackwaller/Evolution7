@@ -1,10 +1,18 @@
 {% extends '_layout' %}
 {% block main %}
+
     {# Make a call to the zomato API #}
-    {% set resturants = searchZomato() %}
-    <pre id="json" style="text-align:left; display: none">{{resturants|json_encode(constant('JSON_PRETTY_PRINT'))}}</pre>
-    {% for restaurant in resturants %}
-        <img src={{ restaurant.restaurant.featured_image  }} style="width: 100px; height: 100px;">
-        <p>{{ restaurant.restaurant.name  }}</p>
-    {% endfor %}
+    {% set resturants = retrieveRestaurants() %}
+
+    {# Check if there were any errors when calling API #}
+    {% if resturants == "An unexpected error has occurred" %}
+            <p>An unexpected error has occurred while retrieving resturants</p>
+    {% else %}
+        <pre id="json" style="text-align:left; display: none">{{resturants|json_encode(constant('JSON_PRETTY_PRINT'))}}</pre>
+        {% for restaurant in resturants %}
+            <img src={{ restaurant.restaurant.featured_image  }} style="width: 100px; height: 100px;">
+            <p>{{ restaurant.restaurant.name  }}</p>
+        {% endfor %}
+    {% endif %}
+
 {% endblock %}
