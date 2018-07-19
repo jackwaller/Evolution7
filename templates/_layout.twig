@@ -76,13 +76,6 @@
       </button>
       <a class="navbar-brand" href="#">Evolution7</a>
     </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav navbar-right">
-        {# <li><a href="#">WHO</a></li>
-        <li><a href="#">WHAT</a></li>
-        <li><a href="#">WHERE</a></li> #}
-      </ul>
-    </div>
   </div>
 </nav>
 
@@ -91,7 +84,7 @@
     <div class="container">
         <h1>Melbourne</h1>
         <h3>Showing 20 restaurants</h3>
-        <span>Change Location</span><span style="font-size:14px; text-decoration:none;"> | </span><span>Show in JSON</span>
+        <span id="showJson" style="cursor:pointer;">Show JSON</span>
     </div>
 </div>
 
@@ -112,6 +105,20 @@
 
 </body>
 </html>
-
+<script>
+    $(document).ready(function(){
+        $('#showJson').click(function(){
+            console.log($('#showJson').text()); 
+            // if JSON is hidden show json and change text of span
+            if( $('#showJson').text() == "Show JSON") {
+                $('#json').show();
+                $('#showJson').text('Hide JSON');
+            } else {
+                $('#json').hide();
+                $('#showJson').text('Show JSON');
+            }
+        });
+    });
+</script> 
 
 
