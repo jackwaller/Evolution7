@@ -88,6 +88,7 @@ class ZomatoTwigExtension extends \Twig_Extension
                     return "An unexpected error has occurred";
                 }
             }
+            // Update the response
             file_put_contents($cacheFile, $jsonResults);
         }
         // Return JSON to the homepage
@@ -97,8 +98,8 @@ class ZomatoTwigExtension extends \Twig_Extension
 
     /**
      * Contact the Zomato API and save the response to cache
-     *     *
-     * @return array
+     *     
+     * @return string
      */
     public function zomatoApiRequest($location = 259)
     {
