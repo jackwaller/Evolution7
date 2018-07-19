@@ -64,25 +64,20 @@ class ZomatoTwigExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('searchZomato', [$this, 'requestZomatoApi']),
-            new \Twig_SimpleFunction('searchZomatoLocation', [$this, 'getZomatoLocationId']),
         ];
     }
 
     /**
      * Contact the Zomato API and make a request to fetch restaurants 
-     *
-     * @param null $text
-     *
+     *     *
      * @return array
      */
     public function requestZomatoApi($location = 259)
     {
-        $locationId = $location; 
-
         // Use guzzle to make a request to the Zomato API
         $client = new Client();
         $response = $client->get(
-            'https://developers.zomato.com/api/v2.1/search?entity_id='.$locationId.'&entity_type=city&count=20', [
+            'https://developers.zomato.com/api/v2.1/search?entity_id='.$location.'&entity_type=city&count=20', [
             'headers' => [
                 'Accept' => 'application/json',
                 'user-key' => 'a92d3dc1e771de07f4ca19fa8c8cbd8f',
@@ -93,31 +88,4 @@ class ZomatoTwigExtension extends \Twig_Extension
         $result = json_decode($response->getBody()->getContents(),true);
         return $result['restaurants'];
     }
-
-
-    /**
-     * Contact the Zomato API and make a request to fetch restaurants 
-     *
-     * @param null $text
-     *
-     * @return array
-     */
-    public function getZomatoLocationId($locationQuery)
-    {
-        // Use guzzle to make a request to the Zomato API
-        $client = new Client();
-        $response = $client->get(
-            'https://developers.zomato.com/api/v2.1/locations?query='.$locationQuery.'&count=20', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'user-key' => 'a92d3dc1e771de07f4ca19fa8c8cbd8f',
-            ],
-        ]);
-
-        // Return the contents of the response 
-        $result = json_decode($response->getBody()->getContents(),true);
-        return $result['restaurants'];
-    }
-
-
 }
